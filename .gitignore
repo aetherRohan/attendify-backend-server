@@ -39,3 +39,5 @@ env/
 application-local.properties
 application-secret.properties
 service-account-key.json
+
+src/main/resources/application.properties
