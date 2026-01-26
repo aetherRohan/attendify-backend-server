@@ -1,23 +1,17 @@
 package com.attendifyserver.attendifyserver.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@Builder
+@NoArgsConstructor
 public class LoginResponse {
-
-    private String message;
     private String role;
     private Long userId;
-    private String fullName;
-
-    //ADD THIS FIELD FOR JWT LATER
+    private String name;
     private String token;
-
-    public LoginResponse(String message, String role, Long userId, String fullName, String token) {
-        this.message = message;
-        this.role = role;
-        this.userId = userId;
-        this.fullName = fullName;
-        this.token = token;
-    }
 }

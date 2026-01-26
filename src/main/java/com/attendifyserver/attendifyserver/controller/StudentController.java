@@ -1,5 +1,4 @@
 package com.attendifyserver.attendifyserver.controller;
 
-public class teacherController {
-
+public class StudentController {
 }
