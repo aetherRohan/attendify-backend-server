@@ -94,7 +94,7 @@ public class AuthenticationService {
         return LoginResponse.builder()
                 .token(jwtToken)
                 .role(userDetails.getAuthorities().toString())
-                .name(userDetails.getUsername())
+                .name(userDetails.getName())
                 .userId(userDetails.getUserId())
                 .build();
     }

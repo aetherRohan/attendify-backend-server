@@ -18,18 +18,22 @@ public class CustomUserDetails implements UserDetails {
     private final String password;
     private final String authorities;
     private final long userId;
+    private final String name;
 
-       public CustomUserDetails(Student student){
-           this.email=student.getEmail();
-           this.password=student.getPassword();
-           this.authorities="ROLE_STUDENT";
-           this.userId=student.getId();
-       }
-    public CustomUserDetails(Teacher teacher){
-        this.email=teacher.getEmail();
-        this.password=teacher.getPassword();
-        this.authorities="ROLE_TEACHER";
-        this.userId=teacher.getId();
+    public CustomUserDetails(Student student) {
+        this.email = student.getEmail();
+        this.password = student.getPassword();
+        this.authorities = "ROLE_STUDENT";
+        this.userId = student.getId();
+        this.name = student.getName();
+    }
+
+    public CustomUserDetails(Teacher teacher) {
+        this.email = teacher.getEmail();
+        this.password = teacher.getPassword();
+        this.authorities = "ROLE_TEACHER";
+        this.userId = teacher.getId();
+        this.name = teacher.getName();
     }
 
 
@@ -67,4 +71,5 @@ public class CustomUserDetails implements UserDetails {
     public String getUsername() {
         return this.email;
     }
+
 }
