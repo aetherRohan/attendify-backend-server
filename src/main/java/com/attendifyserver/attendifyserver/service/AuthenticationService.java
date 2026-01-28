@@ -1,6 +1,8 @@
 package com.attendifyserver.attendifyserver.service;
 
+import com.attendifyserver.attendifyserver.config.RefreshTokenService;
 import com.attendifyserver.attendifyserver.dto.*;
+import com.attendifyserver.attendifyserver.entity.RefreshToken;
 import com.attendifyserver.attendifyserver.enums.Roles;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.UUID;
+
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
@@ -29,6 +33,7 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final RefreshTokenService refreshTokenService;
 
     @Transactional
     public LoginResponse registerStudent(SignupRequest request) {
@@ -47,7 +52,8 @@ public class AuthenticationService {
         String jwtToken = jwtService.generateToken(new CustomUserDetails(savedStudent));
 
         return LoginResponse.builder()
-                .token(jwtToken)
+                .accessToken(jwtToken)
+                .refreshToken(UUID.randomUUID().toString())
                 .name(savedStudent.getName())
                 .role(Roles.ROLE_STUDENT.name())
                 .userId(savedStudent.getId())
@@ -72,7 +78,8 @@ public class AuthenticationService {
         String jwtToken = jwtService.generateToken(new CustomUserDetails(savedTeacher));
 
         return LoginResponse.builder()
-                .token(jwtToken)
+                .accessToken(jwtToken)
+                .refreshToken(UUID.randomUUID().toString())
                 .name(savedTeacher.getName())
                 .role(Roles.ROLE_TEACHER.name())
                 .userId(savedTeacher.getId())
@@ -90,10 +97,39 @@ public class AuthenticationService {
         );
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         String jwtToken = jwtService.generateToken(userDetails);
+        String refreshToken = UUID.randomUUID().toString();
 
         return LoginResponse.builder()
-                .token(jwtToken)
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
                 .role(userDetails.getAuthorities().toString())
+                .name(userDetails.getName())
+                .userId(userDetails.getUserId())
+                .build();
+    }
+
+
+    @Transactional
+    public LoginResponse createRefreshToken(RefreshTokenRequest request) {
+
+        // 1. Perform Rotation (Verify Old -> Delete Old -> Get New)
+        RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(request.getRefreshToken());
+
+        // 2. Get User Details from the NEW token
+        CustomUserDetails userDetails;
+        if (newRefreshToken.getStudent() != null) {
+            userDetails = new CustomUserDetails(newRefreshToken.getStudent());
+        } else {
+            userDetails = new CustomUserDetails(newRefreshToken.getTeacher());
+        }
+
+        // 3. Generate NEW Access Token
+        String newAccessToken = jwtService.generateToken(userDetails);
+
+        return LoginResponse.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken.getToken())
+                .role(userDetails.getAuthorities().stream().findFirst().get().getAuthority())
                 .name(userDetails.getName())
                 .userId(userDetails.getUserId())
                 .build();
