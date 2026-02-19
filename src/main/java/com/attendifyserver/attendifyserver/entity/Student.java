@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @Table(name = "students")
@@ -26,6 +28,13 @@ public class Student {
 
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(mappedBy = "student")
+    private List<Attendance> attendances;
+
+    @ManyToMany(mappedBy = "students")
+    private List<Classes>classes;
+
 
     private String rollNumber;
     private String semester;

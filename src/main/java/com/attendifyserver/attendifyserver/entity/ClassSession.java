@@ -6,32 +6,32 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.List;
 
 @Entity
 @Data
-@Table(name = "teachers")
+@Table(name = "class_session")
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Teacher {
+public class ClassSession {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String email;
-
     @Column(nullable = false)
-    private String password;
+    private Date date;
 
-    @Column(nullable = false)
-    private String name;
+    private LocalTime localTime;
 
-    @OneToMany(mappedBy = "teacher")
-    private List<Classes>classes;
+    @ManyToOne()
+    @JoinColumn(name = "class_id")
+    private Classes classes;
 
-    private String employeeId;
-    private String subjectSpecialization;
+    @OneToMany(mappedBy = "classSession")
+    private List<Attendance> attendances;
+
 }
