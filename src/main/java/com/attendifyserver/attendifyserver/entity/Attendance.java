@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Table(
         name = "attendance",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"student_id", "classSession_id"})
+                @UniqueConstraint(columnNames = {"student_id", "class_session_id"})
         }
 )
 
@@ -26,12 +26,12 @@ public class Attendance {
 
     private boolean isPresent;
 ;
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "student_id",nullable = false)
     private Student student;
 
-    @ManyToOne()
-    @JoinColumn(name = "classSession_id",nullable = false)
-    private ClassSession classSession;
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
+    @JoinColumn(name = "class_session_id",nullable = false)
+    private ClassSession classSessions;
 
 }

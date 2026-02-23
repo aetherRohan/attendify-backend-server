@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-
 import java.time.Instant;
 
 
@@ -26,7 +25,6 @@ public class RefreshToken {
     @OneToOne
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     private Student student;
-
 
     @OneToOne
     @JoinColumn(name = "teacher_id", referencedColumnName = "id")

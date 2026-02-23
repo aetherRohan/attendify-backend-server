@@ -55,7 +55,7 @@ public class AuthenticationService {
                 .accessToken(jwtToken)
                 .refreshToken(UUID.randomUUID().toString())
                 .name(savedStudent.getName())
-                .role(Roles.ROLE_STUDENT.name())
+                .role(Roles.STUDENT.name())
                 .userId(savedStudent.getId())
                 .build();
     }
@@ -81,7 +81,7 @@ public class AuthenticationService {
                 .accessToken(jwtToken)
                 .refreshToken(UUID.randomUUID().toString())
                 .name(savedTeacher.getName())
-                .role(Roles.ROLE_TEACHER.name())
+                .role(Roles.TEACHER.name())
                 .userId(savedTeacher.getId())
                 .build();
     }

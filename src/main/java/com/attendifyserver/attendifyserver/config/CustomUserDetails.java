@@ -23,7 +23,7 @@ public class CustomUserDetails implements UserDetails {
     public CustomUserDetails(Student student) {
         this.email = student.getEmail();
         this.password = student.getPassword();
-        this.authorities = "ROLE_STUDENT";
+        this.authorities = "STUDENT";
         this.userId = student.getId();
         this.name = student.getName();
     }
@@ -31,7 +31,7 @@ public class CustomUserDetails implements UserDetails {
     public CustomUserDetails(Teacher teacher) {
         this.email = teacher.getEmail();
         this.password = teacher.getPassword();
-        this.authorities = "ROLE_TEACHER";
+        this.authorities = "TEACHER";
         this.userId = teacher.getId();
         this.name = teacher.getName();
     }

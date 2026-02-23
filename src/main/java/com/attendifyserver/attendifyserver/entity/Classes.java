@@ -19,16 +19,22 @@ public class Classes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false,unique = true,length = 6)
+    private String classCode;
+
     @Column(nullable = false)
     private String className;
 
+    @Column(name = "duration_Minutes",nullable = false)
+    private int classDuration;
+
     private String section;
 
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "teacher_id",nullable = false)
     private Teacher teacher;
 
-    @ManyToMany()
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "class_student",
             joinColumns = @JoinColumn(name = "class_id"),
@@ -36,7 +42,7 @@ public class Classes {
     )
     private List<Student> students;
 
-    @OneToMany(mappedBy = "classes")
+    @OneToMany(mappedBy = "classes",cascade = CascadeType.ALL)
     private List<ClassSession> classSessions;
 
 }

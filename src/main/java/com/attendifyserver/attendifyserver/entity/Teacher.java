@@ -29,7 +29,7 @@ public class Teacher {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(mappedBy = "teacher")
+    @OneToMany(mappedBy = "teacher",cascade = CascadeType.ALL)
     private List<Classes>classes;
 
     private String employeeId;
