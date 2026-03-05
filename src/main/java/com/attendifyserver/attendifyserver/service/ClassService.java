@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -102,9 +103,17 @@ public class ClassService {
     }
 
 
-    public List<ClassResponse> getAllClasses(Long studentId) {
+    public List<ClassResponse> getAllClasses() {
 
-        List<Classes> rawClasses = classRepository.findByStudentsId(studentId);
+        List<Classes> rawClasses = new ArrayList<>();
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Optional<Student> student = studentRepository.findByEmail(email);
+
+        if (student.isPresent()) {
+            rawClasses = classRepository.findByStudentsId(student.get().getId());
+        } else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found");
 
         return rawClasses.stream().map(
                 classes -> ClassResponse.builder()

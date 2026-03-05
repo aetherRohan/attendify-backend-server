@@ -35,9 +35,9 @@ public class StudentClassController {
 
 
     @GetMapping("/class/getClasses")
-    public ResponseEntity<?> getAllClasses(@RequestParam Long studentId) {
+    public ResponseEntity<?> getAllClasses() {
         try {
-            List<ClassResponse> newClass = classService.getAllClasses(studentId);
+            List<ClassResponse> newClass = classService.getAllClasses();
             return ResponseEntity.ok(newClass);
         } catch (ResponseStatusException e) {
 
