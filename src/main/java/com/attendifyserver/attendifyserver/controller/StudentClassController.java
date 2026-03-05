@@ -19,7 +19,7 @@ public class StudentClassController {
     private final ClassService classService;
     private final StudentService studentService;
 
-    @GetMapping("/class")
+    @PostMapping("/class")
     public ResponseEntity<?> joinClass(@RequestParam String classCode) {
         try {
             ClassResponse newClass = classService.joinClass(classCode);
