@@ -1,16 +1,17 @@
 package com.attendifyserver.attendifyserver.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
-
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class CreateClassRequest {
+@Builder
+public class ClassResponse {
+
+    private Long classId;
+    private String classCode;
     private String className;
     private String section;
+    private String message;
     private int duration;
+
 }

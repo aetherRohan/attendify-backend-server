@@ -5,12 +5,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Map;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class CreateClassRequest {
-    private String className;
-    private String section;
-    private int duration;
+@Builder
+public class SyncOfflineSessionResponse {
+
+    private String status;
+    private Map<String, Integer> studentAttendance;
+
 }

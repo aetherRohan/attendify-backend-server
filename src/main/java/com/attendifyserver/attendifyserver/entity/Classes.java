@@ -9,7 +9,12 @@ import java.util.List;
 
 @Entity
 @Data
-@Table(name = "class")
+@Table(
+        name = "class",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"teacher_id", "class_name","section"})
+        }
+)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -19,7 +24,7 @@ public class Classes {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,unique = true,length = 6)
+    @Column(nullable = false,unique = true,length = 7)
     private String classCode;
 
     @Column(nullable = false)

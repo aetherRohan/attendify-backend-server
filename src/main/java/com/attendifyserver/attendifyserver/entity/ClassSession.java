@@ -23,7 +23,7 @@ import java.util.List;
 public class ClassSession {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name="id",nullable = false,updatable = false)
     private Long id;
 
     @Column(nullable = false)
