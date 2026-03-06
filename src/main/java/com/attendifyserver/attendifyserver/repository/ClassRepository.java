@@ -26,4 +26,5 @@ public interface ClassRepository extends JpaRepository<Classes, Long> {
     List<Student> findStudentsByClassId(@Param("classId") Long classId);
 
     List<Classes> findByStudentsId(Long studentId);
+    List<Classes> findByTeacherId(Long teacherId);
 }

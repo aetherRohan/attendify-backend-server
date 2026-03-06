@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -103,17 +102,45 @@ public class ClassService {
     }
 
 
-    public List<ClassResponse> getAllClasses() {
+    public List<ClassResponse> getStudentClasses() {
 
-        List<Classes> rawClasses = new ArrayList<>();
+        List<Classes> rawClasses;
 
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Optional<Student> student = studentRepository.findByEmail(email);
+        Optional<Student> optStudent = studentRepository.findByEmail(email);
 
-        if (student.isPresent()) {
-            rawClasses = classRepository.findByStudentsId(student.get().getId());
-        } else throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found");
+        if (optStudent.isPresent()) {
+            Student student=optStudent.get();
+
+            rawClasses = classRepository.findByStudentsId(student.getId());
+        } else throw new ResponseStatusException(HttpStatus.NOT_FOUND, " Not found");
+
+        return rawClasses.stream().map(
+                classes -> ClassResponse.builder()
+                        .className(classes.getClassName())
+                        .classCode(classes.getClassCode())
+                        .section(classes.getSection())
+                        .classId(classes.getId())
+                        .duration(classes.getClassDuration())
+                        .message("")
+                        .build()
+        ).collect(Collectors.toList());
+    }
+
+    public List<ClassResponse> getTeacherClasses() {
+
+        List<Classes> rawClasses;
+
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        Optional<Teacher> optionalTeacher = teacherRepository.findByEmail(email);
+
+        if (optionalTeacher.isPresent()) {
+            Teacher teacher= optionalTeacher.get();
+
+            rawClasses = classRepository.findByTeacherId(teacher.getId());
+        } else throw new ResponseStatusException(HttpStatus.NOT_FOUND, " Not found");
 
         return rawClasses.stream().map(
                 classes -> ClassResponse.builder()
@@ -141,8 +168,4 @@ public class ClassService {
                         .build()
         ).collect(Collectors.toList());
     }
-
-
-
-
 }

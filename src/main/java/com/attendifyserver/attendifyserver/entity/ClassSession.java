@@ -1,5 +1,6 @@
 package com.attendifyserver.attendifyserver.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,12 +25,12 @@ public class ClassSession {
 
     @Id
     @Column(name="id",nullable = false,updatable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column(nullable = false,updatable = false)
     private Date session_date;
 
-    private LocalTime localTime;
 
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "class_id")

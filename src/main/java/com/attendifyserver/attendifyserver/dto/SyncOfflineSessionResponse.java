@@ -12,6 +12,7 @@ import java.util.Map;
 public class SyncOfflineSessionResponse {
 
     private String status;
+    private Long sessionId;
+    private Long classId;
     private Map<String, Integer> studentAttendance;
-
 }

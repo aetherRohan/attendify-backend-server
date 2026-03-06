@@ -1,15 +1,14 @@
 package com.attendifyserver.attendifyserver.controller;
-
 import com.attendifyserver.attendifyserver.dto.*;
 import com.attendifyserver.attendifyserver.service.ClassService;
 import com.attendifyserver.attendifyserver.service.ClassSessionService;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.logging.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
-import java.util.Map;
+
 
 @RestController
 @RequestMapping("/api/teacher")
@@ -34,7 +33,6 @@ public class TeacherClassController {
         }
     }
 
-
     @GetMapping("/class/{classId}/students")
     public ResponseEntity<?> getEnrolledStudents(@PathVariable Long classId) {
         try {
@@ -49,23 +47,32 @@ public class TeacherClassController {
         }
     }
 
+    @GetMapping("/class/getClasses")
+    public ResponseEntity<?> getAllClasses() {
+        try {
+            List<ClassResponse> newClass = classService.getTeacherClasses();
+            return ResponseEntity.ok(newClass);
+        } catch (ResponseStatusException e) {
 
+            return ResponseEntity.status(e.getStatusCode()).body(new MessageResponse(e.getReason()));
+        } catch (Exception e) {
 
+            return ResponseEntity.internalServerError().body(new MessageResponse("Something Went Wrong"));
+        }
+    }
 
-
-    /**
-     * 3. SYNC OFFLINE SESSION (The Heavy Lifter)
-     * Called by Android WorkManager when the class ends and internet is restored.
-     * This creates the ClassSession AND saves all Attendance records in one transaction.
-     */
-    @PostMapping("/sessions/sync")
+    @PostMapping("/session/sync")
     public ResponseEntity<?> syncClassSession(@RequestBody SyncOfflineSessionRequest syncRequest) {
+        System.out.println("session controller entered");
+        try {
+            System.out.println("trying to call service to save attendance");
+            SyncOfflineSessionResponse response = sessionService.processAndSaveOfflineSession(syncRequest);
 
-        // This service method will calculate the 60% threshold for each student in the Map
-        sessionService.processAndSaveOfflineSession(syncRequest);
-
-        return ResponseEntity.ok(Map.of(
-                "message", "Offline session and attendance synced successfully!"
-        ));
+            return ResponseEntity.ok(response);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(new MessageResponse(e.getReason()));
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(new MessageResponse("Something Went Wrong"));
+        }
     }
 }

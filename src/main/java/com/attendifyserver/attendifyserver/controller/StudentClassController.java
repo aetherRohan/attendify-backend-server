@@ -37,7 +37,7 @@ public class StudentClassController {
     @GetMapping("/class/getClasses")
     public ResponseEntity<?> getAllClasses() {
         try {
-            List<ClassResponse> newClass = classService.getAllClasses();
+            List<ClassResponse> newClass = classService.getStudentClasses();
             return ResponseEntity.ok(newClass);
         } catch (ResponseStatusException e) {
 

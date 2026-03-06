@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
                 @UniqueConstraint(columnNames = {"student_id", "class_session_id"})
         }
 )
-
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,7 +24,7 @@ public class Attendance {
     private Long id;
 
     private boolean isPresent;
-;
+
     @ManyToOne(fetch = FetchType.LAZY,optional = false)
     @JoinColumn(name = "student_id",nullable = false)
     private Student student;
