@@ -1,6 +1,8 @@
 package com.attendifyserver.attendifyserver.service;
+import com.attendifyserver.attendifyserver.dto.StudentAttendanceResponse;
 import com.attendifyserver.attendifyserver.dto.SyncOfflineSessionRequest;
 import com.attendifyserver.attendifyserver.dto.SyncOfflineSessionResponse;
+import com.attendifyserver.attendifyserver.entity.Attendance;
 import com.attendifyserver.attendifyserver.entity.ClassSession;
 import com.attendifyserver.attendifyserver.entity.Classes;
 import com.attendifyserver.attendifyserver.repository.ClassRepository;
@@ -10,6 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Service
@@ -28,20 +33,28 @@ public class ClassSessionService {
                         HttpStatus.NOT_FOUND, "Class not found. Cannot sync session."
                 ));
 
-        System.out.println("Found class"+targetClass.getId());
+        System.out.println("Found class" + targetClass.getId());
+
+        ClassSession currentSession = ClassSession.builder()
+                .attendances(new ArrayList<Attendance>())
+                .classes(targetClass)
+                .session_date(request.getSessionDate())
+                .build();
+
+
+        ClassSession savedClassSession=sessionRepository.save(currentSession);
 
         /// ATTENDANCE LOGIC HERE~~~~
-      ClassSession savedSessionAttendance= attendanceService.calculateAndSaveBulkAttendance(
+        List<StudentAttendanceResponse> attendanceResponseList =   attendanceService.calculateAndSaveBulkAttendance(
                                                                    request.getTotalWindowsCount(),
                                                                    request.getStudentWindowCounts(),
-                                                                   request.getClassId(),
-                                                                   request.getSessionDate(),targetClass);
-
+                                                                   savedClassSession, targetClass.getId());
 
        /// return the response that it synced perfectly
         return SyncOfflineSessionResponse.builder()
-                .sessionId(savedSessionAttendance.getId())
+                .sessionId(currentSession.getId())
                 .classId(targetClass.getId())
+                .studentAttendance(attendanceResponseList)
                 .status("success")
                 .build();
     }

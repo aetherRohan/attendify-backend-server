@@ -38,7 +38,7 @@ public class Student {
     @ManyToMany(mappedBy = "students")
     private List<Classes>classes;
 
-    private String rollNumber;
+    private Integer rollNumber;
     private String semester;
     private String department;
 

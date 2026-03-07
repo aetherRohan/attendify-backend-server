@@ -1,5 +1,4 @@
 package com.attendifyserver.attendifyserver.entity;
-
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

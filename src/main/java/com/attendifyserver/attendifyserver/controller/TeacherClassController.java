@@ -72,7 +72,7 @@ public class TeacherClassController {
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(new MessageResponse(e.getReason()));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(new MessageResponse("Something Went Wrong"));
+            return ResponseEntity.internalServerError().body(new MessageResponse(e.getMessage()));
         }
     }
 }

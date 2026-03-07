@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -14,5 +15,5 @@ public class SyncOfflineSessionResponse {
     private String status;
     private Long sessionId;
     private Long classId;
-    private Map<String, Integer> studentAttendance;
+    private List<StudentAttendanceResponse> studentAttendance;
 }

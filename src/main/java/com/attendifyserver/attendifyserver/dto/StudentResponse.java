@@ -8,6 +8,6 @@ import lombok.Data;
 public class StudentResponse {
     private Long id;
     private String name;
-    private String rollNumber;
+    private Integer rollNumber;
     private String bleUuid;
 }
