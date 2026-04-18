@@ -11,9 +11,5 @@ import java.util.Map;
 @Data
 @Builder
 public class SyncOfflineSessionResponse {
-
     private String status;
-    private Long sessionId;
-    private Long classId;
-    private List<StudentAttendanceResponse> studentAttendance;
 }

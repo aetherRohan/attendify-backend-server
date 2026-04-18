@@ -1,4 +1,5 @@
 package com.attendifyserver.attendifyserver.controller;
+
 import com.attendifyserver.attendifyserver.dto.*;
 import com.attendifyserver.attendifyserver.service.ClassService;
 import com.attendifyserver.attendifyserver.service.ClassSessionService;
@@ -7,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 
 
@@ -62,7 +64,7 @@ public class TeacherClassController {
     }
 
     @PostMapping("/session/sync")
-    public ResponseEntity<?> syncClassSession(@RequestBody SyncOfflineSessionRequest syncRequest) {
+    public ResponseEntity<?> syncClassSession(@RequestBody List<SyncOfflineSessionRequest> syncRequest) {
         System.out.println("session controller entered");
         try {
             System.out.println("trying to call service to save attendance");
@@ -70,8 +72,10 @@ public class TeacherClassController {
 
             return ResponseEntity.ok(response);
         } catch (ResponseStatusException e) {
+            e.printStackTrace();
             return ResponseEntity.status(e.getStatusCode()).body(new MessageResponse(e.getReason()));
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError().body(new MessageResponse(e.getMessage()));
         }
     }

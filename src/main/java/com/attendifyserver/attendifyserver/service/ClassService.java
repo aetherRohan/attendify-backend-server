@@ -157,12 +157,17 @@ public class ClassService {
 
     public List<StudentResponse> getStudentsForClass(Long classId) {
 
+        if(!classRepository.existsById(classId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND,"Class doesn't exist");
+        }
+
         List<Student> rawStudentList = classRepository.findStudentsByClassId(classId);
 
         return rawStudentList.stream().map(
                 student -> StudentResponse.builder()
                         .name(student.getName())
-                        .id(student.getId())
+                        .studentId(student.getId())
+                        .classId(classId)
                         .rollNumber(student.getRollNumber())
                         .bleUuid(student.getBleUuid().toString())
                         .build()

@@ -56,17 +56,8 @@ public class AttendanceService {
                                               .student(student)
                                               .build();
             System.out.println("Attendance Calculated");
-            System.out.println(student.getRollNumber());
-
-            StudentAttendanceResponse response = StudentAttendanceResponse.builder()
-                    .rollNumber(student.getRollNumber())
-                    .studentName(student.getName())
-                    .isPresent(isPresent)
-                    .build();
-            System.out.println("Response DTO calculated");
 
             attendanceList.add(attendance);
-            attendanceResponseList.add(response);
         }
         List<Attendance> savedAttendance = attendanceRepository.saveAll(attendanceList);
 
