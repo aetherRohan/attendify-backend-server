@@ -15,7 +15,7 @@ import java.util.List;
 @Table(
         name = "class_session",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"class_id", "session_date"})
+                @UniqueConstraint(columnNames = {"class_id", "sessionDate"})
         }
 )
 @Builder
@@ -29,7 +29,7 @@ public class ClassSession {
     private Long id;
 
     @Column(nullable = false,updatable = false)
-    private Date session_date;
+    private String sessionDate;
 
 
     @ManyToOne(fetch = FetchType.LAZY,optional = false)

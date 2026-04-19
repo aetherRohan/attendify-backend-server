@@ -1,5 +1,5 @@
 package com.attendifyserver.attendifyserver.service;
-import com.attendifyserver.attendifyserver.dto.StudentAttendanceResponse;
+
 import com.attendifyserver.attendifyserver.dto.SyncOfflineSessionRequest;
 import com.attendifyserver.attendifyserver.dto.SyncOfflineSessionResponse;
 import com.attendifyserver.attendifyserver.entity.Attendance;
@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,33 +29,34 @@ public class ClassSessionService {
 
         for (SyncOfflineSessionRequest request:requestSession){
 
-            System.out.println(request.getClassId());
-            Long parsedClassId=Long.valueOf(request.getClassId());
-            Classes targetClass = classRepository.findById(parsedClassId)
+            Classes targetClass = classRepository.findById(request.getClassId())
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.NOT_FOUND, "Class not found. Cannot sync session."
                     ));
 
             System.out.println("Found class" + targetClass.getId());
 
+            if (sessionRepository.existsByClassesIdAndSessionDate(targetClass.getId(),request.getSessionDate())){
+                throw new ResponseStatusException(HttpStatus.CONFLICT,"Session already saved to Server");
+            }
+
             ClassSession currentSession = ClassSession.builder()
                     .attendances(new ArrayList<Attendance>())
                     .classes(targetClass)
-                    .session_date(request.getSessionDate())
+                    .sessionDate(request.getSessionDate())
                     .build();
 
 
             ClassSession savedClassSession=sessionRepository.save(currentSession);
 
-            /// ATTENDANCE LOGIC HERE~~~~
+            /// ATTENDANCE LOGIC HERE
             attendanceService.calculateAndSaveBulkAttendance(
                     request.getTotalWindowsCount(),
                     request.getStudentWindowCounts(),
                     savedClassSession, targetClass.getId());
         }
-       /// return the response that it synced perfectly
         return SyncOfflineSessionResponse.builder()
-                .status("success")
+                .STATUS("success")
                 .build();
     }
 }

@@ -16,7 +16,7 @@ import java.util.UUID;
 @Builder
 public class SyncOfflineSessionRequest {
     private Long classId;
-    private Date sessionDate;
+    private String sessionDate;
     private Integer totalWindowsCount;
     private Map<UUID, Integer> studentWindowCounts;
 }
