@@ -37,7 +37,8 @@ public class ClassSessionService {
             System.out.println("Found class" + targetClass.getId());
 
             if (sessionRepository.existsByClassesIdAndSessionDate(targetClass.getId(),request.getSessionDate())){
-                throw new ResponseStatusException(HttpStatus.CONFLICT,"Session already saved to Server");
+                System.out.println("Duplicate Found (skipping)");
+                continue;
             }
 
             ClassSession currentSession = ClassSession.builder()
