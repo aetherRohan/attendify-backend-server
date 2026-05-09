@@ -1,10 +1,7 @@
 package com.attendifyserver.attendifyserver.controller;
 
 
-import com.attendifyserver.attendifyserver.dto.LoginRequest;
-import com.attendifyserver.attendifyserver.dto.LoginResponse;
-import com.attendifyserver.attendifyserver.dto.MessageResponse;
-import com.attendifyserver.attendifyserver.dto.SignupRequest;
+import com.attendifyserver.attendifyserver.dto.*;
 import com.attendifyserver.attendifyserver.service.AuthenticationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -66,4 +63,22 @@ public class AuthController {
             return ResponseEntity.internalServerError().body("Something went wrong");
         }
     }
+
+    @PostMapping("/refreshToken")
+    public ResponseEntity<?> getNewAccessToken(@RequestBody RefreshTokenRequest refreshToken) {
+        try {
+            TokenResponse response = authService.createRefreshToken(refreshToken);
+            return ResponseEntity.ok(response);
+
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new MessageResponse("Invalid"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.internalServerError().body("Something went wrong");
+        }
+    }
+
+
+
 }

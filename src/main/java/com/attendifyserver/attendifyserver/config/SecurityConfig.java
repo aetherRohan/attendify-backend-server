@@ -34,7 +34,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/teacher/**").hasAuthority(Roles.TEACHER.name())
                         .requestMatchers("/api/auth/signup/student",
                                 "/api/auth/signup/teacher",
-                                "/api/auth/login").permitAll()
+                                "/api/auth/login","/api/auth/refreshToken").permitAll()
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

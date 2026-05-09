@@ -4,7 +4,10 @@ import com.attendifyserver.attendifyserver.config.RefreshTokenService;
 import com.attendifyserver.attendifyserver.dto.*;
 import com.attendifyserver.attendifyserver.entity.RefreshToken;
 import com.attendifyserver.attendifyserver.enums.Roles;
+import com.attendifyserver.attendifyserver.repository.RefreshTokenRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import com.attendifyserver.attendifyserver.config.CustomUserDetails;
 import com.attendifyserver.attendifyserver.config.JwtService;
@@ -21,6 +24,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -29,10 +34,14 @@ public class AuthenticationService {
 
     private final StudentRepository studentRepository;
     private final TeacherRepository teacherRepository;
+    private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
     private final RefreshTokenService refreshTokenService;
+
+    @Value("${application.security.jwt.refresh-token.expiration}")
+    private long refreshExpirationMs;
 
     @Transactional
     public LoginResponse registerStudent(SignupRequest request) {
@@ -48,11 +57,20 @@ public class AuthenticationService {
                 .build();
 
         Student savedStudent = studentRepository.save(student);
+
+        RefreshToken newRefreshToken = RefreshToken.builder()
+                .student(savedStudent)
+                .token(UUID.randomUUID().toString())
+                .expiryDate(Instant.now().plusMillis(refreshExpirationMs))
+                .build();
+
+        refreshTokenRepository.save(newRefreshToken);
+
         String jwtToken = jwtService.generateToken(new CustomUserDetails(savedStudent));
 
         return LoginResponse.builder()
                 .accessToken(jwtToken)
-                .refreshToken(UUID.randomUUID().toString())
+                .refreshToken(newRefreshToken.getToken())
                 .name(savedStudent.getName())
                 .role(Roles.STUDENT.name())
                 .userId(savedStudent.getId())
@@ -68,18 +86,29 @@ public class AuthenticationService {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already in use");
         }
 
+
         Teacher teacher = Teacher.builder()
                 .name(request.getName())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
 
+
         Teacher savedTeacher = teacherRepository.save(teacher);
+
+        RefreshToken newRefreshToken = RefreshToken.builder()
+                .teacher(savedTeacher)
+                .token(UUID.randomUUID().toString())
+                .expiryDate(Instant.now().plusMillis(refreshExpirationMs))
+                .build();
+
+        refreshTokenRepository.save(newRefreshToken);
+
         String jwtToken = jwtService.generateToken(new CustomUserDetails(savedTeacher));
 
         return LoginResponse.builder()
                 .accessToken(jwtToken)
-                .refreshToken(UUID.randomUUID().toString())
+                .refreshToken(newRefreshToken.getToken())
                 .name(savedTeacher.getName())
                 .role(Roles.TEACHER.name())
                 .userId(savedTeacher.getId())
@@ -97,11 +126,44 @@ public class AuthenticationService {
         );
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         String jwtToken = jwtService.generateToken(userDetails);
-        String refreshToken = UUID.randomUUID().toString();
+
+
+        String role = userDetails.getAuthorities().iterator().next().getAuthority();
+        long userId = userDetails.getUserId();
+
+        RefreshToken refreshToken;
+
+        //  "Update or Create" the Refresh Token based on Role
+        if (role.equals("TEACHER")) {
+            Teacher teacher = teacherRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Teacher not found"));
+
+            // Find existing token, or create a  new one if it doesn't exist
+            refreshToken = refreshTokenRepository.findByTeacher(teacher)
+                    .orElse(new RefreshToken());
+
+            refreshToken.setToken(UUID.randomUUID().toString());
+            refreshToken.setExpiryDate(Instant.now().plusMillis(refreshExpirationMs));
+            refreshToken.setTeacher(teacher);
+
+        } else {
+            // It's a STUDENT
+            Student student = studentRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Student not found"));
+
+            refreshToken = refreshTokenRepository.findByStudent(student)
+                    .orElse(new RefreshToken());
+
+            refreshToken.setToken(UUID.randomUUID().toString());
+            refreshToken.setExpiryDate(Instant.now().plusMillis(refreshExpirationMs));
+            refreshToken.setStudent(student);
+        }
+
+        refreshTokenRepository.save(refreshToken);
 
         return LoginResponse.builder()
                 .accessToken(jwtToken)
-                .refreshToken(refreshToken)
+                .refreshToken(refreshToken.getToken())
                 .role(userDetails.getAuthorities().toString())
                 .name(userDetails.getName())
                 .userId(userDetails.getUserId())
@@ -111,7 +173,7 @@ public class AuthenticationService {
 
 
     @Transactional
-    public LoginResponse createRefreshToken(RefreshTokenRequest request) {
+    public TokenResponse createRefreshToken(RefreshTokenRequest request) {
 
         // 1. Perform Rotation (Verify Old -> Delete Old -> Get New)
         RefreshToken newRefreshToken = refreshTokenService.createRefreshToken(request.getRefreshToken());
@@ -127,12 +189,12 @@ public class AuthenticationService {
         // 3. Generate NEW Access Token
         String newAccessToken = jwtService.generateToken(userDetails);
 
-        return LoginResponse.builder()
+        return TokenResponse.builder()
                 .accessToken(newAccessToken)
                 .refreshToken(newRefreshToken.getToken())
-                .role(userDetails.getAuthorities().stream().findFirst().get().getAuthority())
-                .name(userDetails.getName())
-                .userId(userDetails.getUserId())
                 .build();
     }
+
+
+
 }

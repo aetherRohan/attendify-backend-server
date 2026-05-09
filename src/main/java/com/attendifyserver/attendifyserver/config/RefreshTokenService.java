@@ -24,8 +24,7 @@ public class RefreshTokenService {
     private long refreshExpirationMs;
 
     private final RefreshTokenRepository refreshTokenRepository;
-    private final StudentRepository studentRepository;
-    private final TeacherRepository teacherRepository;
+
 
 
     @Transactional
@@ -37,23 +36,15 @@ public class RefreshTokenService {
 
 
         if (token.getExpiryDate().compareTo(Instant.now()) < 0) {
-            refreshTokenRepository.deleteByToken(token.getToken());
+            refreshTokenRepository.delete(token);
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Please login again.");
         }
 
-        Student student = token.getStudent();
-        Teacher teacher = token.getTeacher();
 
-        refreshTokenRepository.delete(token);
+        /// update the token
+        token.setToken(UUID.randomUUID().toString());
+        token.setExpiryDate(Instant.now().plusMillis(refreshExpirationMs));
 
-        /// generate the token
-        RefreshToken newRefreshToken = RefreshToken.builder()
-                .student(student)
-                .teacher(teacher)
-                .token(UUID.randomUUID().toString())
-                .expiryDate(Instant.now().plusMillis(refreshExpirationMs))
-                .build();
-
-        return refreshTokenRepository.save(newRefreshToken);
+        return refreshTokenRepository.save(token);
     }
 }
