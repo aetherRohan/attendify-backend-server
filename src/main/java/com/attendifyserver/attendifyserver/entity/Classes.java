@@ -31,7 +31,7 @@ public class Classes {
     private String className;
 
     @Column(name = "duration_Minutes",nullable = false)
-    private int classDuration;
+    private String classDuration;
 
     private String section;
 

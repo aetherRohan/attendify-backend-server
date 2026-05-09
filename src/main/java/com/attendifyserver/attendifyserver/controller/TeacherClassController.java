@@ -21,7 +21,7 @@ public class TeacherClassController {
     private final ClassSessionService sessionService;
 
 
-    @PostMapping("/class")
+    @PostMapping("/class/createClass")
     public ResponseEntity<?> createClass(@RequestBody CreateClassRequest classRequest) {
         try {
             ClassResponse newClass = classService.createClass(classRequest);

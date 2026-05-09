@@ -11,6 +11,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
+
 @Data
 public class CustomUserDetails implements UserDetails {
 
@@ -19,6 +21,7 @@ public class CustomUserDetails implements UserDetails {
     private final String authorities;
     private final long userId;
     private final String name;
+    private  UUID bleUuid;
 
     public CustomUserDetails(Student student) {
         this.email = student.getEmail();
@@ -26,6 +29,7 @@ public class CustomUserDetails implements UserDetails {
         this.authorities = "STUDENT";
         this.userId = student.getId();
         this.name = student.getName();
+        this.bleUuid=student.getBleUuid();
     }
 
     public CustomUserDetails(Teacher teacher) {

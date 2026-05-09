@@ -12,6 +12,6 @@ public class ClassResponse {
     private String className;
     private String section;
     private String message;
-    private int duration;
+    private String duration;
 
 }

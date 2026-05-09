@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class CreateClassRequest {
     private String className;
     private String section;
-    private int duration;
+    private String duration;
 }

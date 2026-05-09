@@ -21,7 +21,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.UUID;
 
 @Service
@@ -57,6 +56,7 @@ public class AuthenticationService {
                 .name(savedStudent.getName())
                 .role(Roles.STUDENT.name())
                 .userId(savedStudent.getId())
+                .bleUuid(savedStudent.getBleUuid())
                 .build();
     }
 
@@ -105,6 +105,7 @@ public class AuthenticationService {
                 .role(userDetails.getAuthorities().toString())
                 .name(userDetails.getName())
                 .userId(userDetails.getUserId())
+                .bleUuid(userDetails.getBleUuid())
                 .build();
     }
 
