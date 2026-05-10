@@ -1,5 +1,6 @@
 package com.attendifyserver.attendifyserver.config;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -52,7 +53,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-        } catch (Exception e) {
+        } catch (ExpiredJwtException e) {
+
+            System.out.println("JWT Expired: " + e.getMessage());
+
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"JWT Token has expired\"}");
+            return;
+
+        }catch (Exception e) {
+            e.printStackTrace();
              System.out.println("JWT Error: " + e.getMessage());
         }
 

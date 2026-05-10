@@ -19,7 +19,7 @@ public class StudentClassController {
     private final ClassService classService;
     private final StudentService studentService;
 
-    @PostMapping("/class")
+    @PostMapping("/class/joinClass")
     public ResponseEntity<?> joinClass(@RequestParam String classCode) {
         try {
             ClassResponse newClass = classService.joinClass(classCode);
@@ -47,4 +47,7 @@ public class StudentClassController {
             return ResponseEntity.internalServerError().body(new MessageResponse("Something Went Wrong"));
         }
     }
+
+
+
 }

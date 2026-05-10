@@ -31,6 +31,6 @@ public final class ClassCodeGenerator {
                 if (Character.isDigit(randomChar)) hasNumber = true;
             }
         }
-        return codeBuilder.toString();
+        return codeBuilder.toString().toUpperCase();
     }
 }

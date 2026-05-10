@@ -97,6 +97,8 @@ public class ClassService {
                         .classId(savedClass.getId())
                         .classCode(savedClass.getClassCode())
                         .className(savedClass.getClassName())
+                        .section(savedClass.getSection())
+                        .duration(savedClass.getClassDuration())
                         .message("Enroll Success")
                         .build();
             }

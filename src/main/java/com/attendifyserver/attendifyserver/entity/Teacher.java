@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -30,7 +31,7 @@ public class Teacher {
     private String name;
 
     @OneToMany(mappedBy = "teacher",cascade = CascadeType.ALL)
-    private List<Classes>classes;
+    private Set<Classes> classes;
 
     private String employeeId;
     private String subjectSpecialization;

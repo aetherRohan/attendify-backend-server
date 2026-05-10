@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Data
@@ -45,9 +46,9 @@ public class Classes {
             joinColumns = @JoinColumn(name = "class_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
-    private List<Student> students;
+    private Set<Student> students;
 
     @OneToMany(mappedBy = "classes",cascade = CascadeType.ALL)
-    private List<ClassSession> classSessions;
+    private Set<ClassSession> classSessions;
 
 }
