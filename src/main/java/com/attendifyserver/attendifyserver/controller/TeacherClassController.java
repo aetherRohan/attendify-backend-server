@@ -4,7 +4,6 @@ import com.attendifyserver.attendifyserver.dto.*;
 import com.attendifyserver.attendifyserver.service.ClassService;
 import com.attendifyserver.attendifyserver.service.ClassSessionService;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.logging.Log;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
@@ -62,6 +61,42 @@ public class TeacherClassController {
             return ResponseEntity.internalServerError().body(new MessageResponse("Something Went Wrong"));
         }
     }
+
+
+    @GetMapping("/class/classSession")
+    public ResponseEntity<?> getAllClassSessions(@RequestParam("classId")Long classId) {
+        try {
+            List<ClassSessionResponse> classSession = sessionService.getAllClassSessions(classId);
+            return ResponseEntity.ok(classSession);
+
+        } catch (ResponseStatusException e) {
+
+            return ResponseEntity.status(e.getStatusCode()).body(new MessageResponse(e.getReason()));
+        } catch (Exception e) {
+
+            return ResponseEntity.internalServerError().body(new MessageResponse("Something Went Wrong"));
+        }
+    }
+
+
+
+
+    @GetMapping("/classSession/getAllAttendances")
+    public ResponseEntity<?> getAllClassSessionsAttendance(@RequestParam("classSessionId")Long classSessionId) {
+        try {
+            List<AttendanceResponse> classSession = sessionService.getAllAttendance(classSessionId);
+            return ResponseEntity.ok(classSession);
+
+        } catch (ResponseStatusException e) {
+
+            return ResponseEntity.status(e.getStatusCode()).body(new MessageResponse(e.getReason()));
+        } catch (Exception e) {
+
+            return ResponseEntity.internalServerError().body(new MessageResponse("Something Went Wrong"));
+        }
+    }
+
+
 
     @PostMapping("/session/sync")
     public ResponseEntity<?> syncClassSession(@RequestBody List<SyncOfflineSessionRequest> syncRequest) {

@@ -1,10 +1,12 @@
 package com.attendifyserver.attendifyserver.service;
 
 import com.attendifyserver.attendifyserver.dto.*;
+import com.attendifyserver.attendifyserver.entity.ClassSession;
 import com.attendifyserver.attendifyserver.entity.Classes;
 import com.attendifyserver.attendifyserver.entity.Student;
 import com.attendifyserver.attendifyserver.entity.Teacher;
 import com.attendifyserver.attendifyserver.repository.ClassRepository;
+import com.attendifyserver.attendifyserver.repository.ClassSessionRepository;
 import com.attendifyserver.attendifyserver.repository.StudentRepository;
 import com.attendifyserver.attendifyserver.repository.TeacherRepository;
 import com.attendifyserver.attendifyserver.util.ClassCodeGenerator;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.PublicKey;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -28,6 +31,7 @@ public class ClassService {
     private final ClassRepository classRepository;
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
+    private final ClassSessionRepository classSessionRepository;
 
 
     @Transactional
@@ -167,8 +171,8 @@ public class ClassService {
 
         List<Student> rawStudentList = classRepository.findStudentsByClassId(classId);
 
-        return rawStudentList.stream().map(
-                student -> StudentResponse.builder()
+        return rawStudentList.stream().map(student ->
+                       StudentResponse.builder()
                         .name(student.getName())
                         .studentId(student.getId())
                         .classId(classId)
@@ -177,4 +181,6 @@ public class ClassService {
                         .build()
         ).collect(Collectors.toList());
     }
+
+
 }
