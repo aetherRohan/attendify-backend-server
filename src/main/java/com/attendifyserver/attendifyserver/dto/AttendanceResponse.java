@@ -8,6 +8,9 @@ import lombok.Data;
 public class AttendanceResponse {
 
     private Long classSessionId;
+    private Long classId;
+    private Long studentId;
+    private String date;
     private String studentName;
     private Integer rollNumber;
     private Boolean isPresent;

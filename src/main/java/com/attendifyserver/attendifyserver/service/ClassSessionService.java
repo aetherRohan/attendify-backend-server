@@ -7,7 +7,6 @@ import com.attendifyserver.attendifyserver.dto.SyncOfflineSessionResponse;
 import com.attendifyserver.attendifyserver.entity.Attendance;
 import com.attendifyserver.attendifyserver.entity.ClassSession;
 import com.attendifyserver.attendifyserver.entity.Classes;
-import com.attendifyserver.attendifyserver.entity.Student;
 import com.attendifyserver.attendifyserver.repository.AttendanceRepository;
 import com.attendifyserver.attendifyserver.repository.ClassRepository;
 import com.attendifyserver.attendifyserver.repository.ClassSessionRepository;
@@ -19,6 +18,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 
@@ -72,7 +72,7 @@ public class ClassSessionService {
     public List<ClassSessionResponse> getAllClassSessions(Long classId) {
 
         if (!classRepository.existsById(classId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Class-Session doesn't exist");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Class doesn't exist");
         }
 
         List<ClassSession> rawClassSession = classSessionRepository.findByClassesId(classId);
@@ -89,7 +89,7 @@ public class ClassSessionService {
     }
 
 
-    public List<AttendanceResponse> getAllAttendance(Long sessionId) {
+    public List<AttendanceResponse> getAllAttendanceForTeacher(Long sessionId) {
 
         if (!classSessionRepository.existsById(sessionId)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Class-Session doesn't exist");
@@ -97,31 +97,47 @@ public class ClassSessionService {
 
         List<Attendance> rawAttendance = attendanceRepository.findByClassSessionsId(sessionId);
 
+        Optional<Classes> curClassOpt = classRepository.findByClassSessionsId(sessionId);
+        Optional<ClassSession> optionalClassSession = classSessionRepository.findById(sessionId);
+
+
+        Classes classes = curClassOpt.orElseThrow(() ->
+                new RuntimeException("Class not found with the provided ID")
+        );
+
+        ClassSession classSession = optionalClassSession.orElseThrow(() ->
+                new RuntimeException("ClassSession not found with the provided ID")
+        );
+
         return rawAttendance.stream().map(currentAttendance ->
 
-
                 AttendanceResponse.builder()
+                        .classId(classes.getId())
                         .classSessionId(sessionId)
+                        .date(classSession.getSessionDate())
+                        .studentId(currentAttendance.getStudent().getId())
                         .isPresent(currentAttendance.isPresent())
                         .studentName(currentAttendance.getStudent().getName())
                         .rollNumber(currentAttendance.getStudent().getRollNumber())
                         .build()
         ).collect(Collectors.toList());
-
     }
 
-    public List<AttendanceResponse> getAttendance(Long sessionId,Long studentId) {
+    public List<AttendanceResponse> getAttendanceByStudentIdAndCLassId(Long classId, Long studentId) {
 
-        if (!classSessionRepository.existsById(sessionId)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Class-Session or Student doesn't exist");
+        if (!classRepository.existsById(classId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Class or Student doesn't exist");
         }
 
-        List<Attendance> rawAttendance = attendanceRepository.findByClassSessionsIdAndStudentId(sessionId,studentId);
+        List<Attendance> rawAttendance = attendanceRepository.findByStudentIdAndClassId(studentId, classId);
 
         return rawAttendance.stream().map(currentAttendance ->
 
                 AttendanceResponse.builder()
-                        .classSessionId(sessionId)
+                        .date(currentAttendance.getClassSessions().getSessionDate())
+                        .classId(classId)
+                        .classSessionId(currentAttendance.getClassSessions().getId())
+                        .studentId(studentId)
                         .isPresent(currentAttendance.isPresent())
                         .studentName(currentAttendance.getStudent().getName())
                         .rollNumber(currentAttendance.getStudent().getRollNumber())
@@ -129,7 +145,5 @@ public class ClassSessionService {
         ).collect(Collectors.toList());
 
     }
-
-
 
 }

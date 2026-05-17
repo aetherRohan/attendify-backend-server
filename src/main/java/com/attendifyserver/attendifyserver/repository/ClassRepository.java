@@ -22,6 +22,8 @@ public interface ClassRepository extends JpaRepository<Classes, Long> {
 
     Optional<Classes> findByClassCode(String classCode);
 
+    Optional<Classes> findByClassSessionsId(Long classSessionId);
+
     @Query("select s from Classes c JOIN c.students s where c.id=:classId")
     List<Student> findStudentsByClassId(@Param("classId") Long classId);
 

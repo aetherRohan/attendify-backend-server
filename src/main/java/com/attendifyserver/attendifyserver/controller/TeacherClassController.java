@@ -84,7 +84,7 @@ public class TeacherClassController {
     @GetMapping("/classSession/getAllAttendances")
     public ResponseEntity<?> getAllClassSessionsAttendance(@RequestParam("classSessionId")Long classSessionId) {
         try {
-            List<AttendanceResponse> classSession = sessionService.getAllAttendance(classSessionId);
+            List<AttendanceResponse> classSession = sessionService.getAllAttendanceForTeacher(classSessionId);
             return ResponseEntity.ok(classSession);
 
         } catch (ResponseStatusException e) {

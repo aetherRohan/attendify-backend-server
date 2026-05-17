@@ -69,10 +69,11 @@ public class StudentClassController {
     }
 
     @GetMapping("/classSession/getAttendance")
-    public ResponseEntity<?> getClassSessionsAttendance(@RequestParam("classSessionId")Long classSessionId,
-                                                           @RequestParam("studentId")Long studentId) {
+    public ResponseEntity<?> getClassSessionsAttendance(@RequestParam("classId") Long classId,
+                                                        @RequestParam("studentId") Long studentId) {
         try {
-            List<AttendanceResponse> classSession = classSessionService.getAttendance(classSessionId,studentId);
+            List<AttendanceResponse> classSession = classSessionService
+                                                       .getAttendanceByStudentIdAndCLassId(classId, studentId);
             return ResponseEntity.ok(classSession);
 
         } catch (ResponseStatusException e) {

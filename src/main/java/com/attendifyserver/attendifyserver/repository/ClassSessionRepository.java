@@ -13,4 +13,5 @@ public interface ClassSessionRepository extends JpaRepository<ClassSession,Long>
     List<ClassSession> findByClassesId(Long classId);
 
 
+
 }
