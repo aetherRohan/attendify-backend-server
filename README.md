@@ -176,8 +176,8 @@ spring.jpa.show-sql=true
 
 # JWT
 application.security.jwt.secret-key=your_base64_encoded_secret_key
-application.security.jwt.expiration=86400000
-application.security.jwt.refresh-token.expiration=604800000
+application.security.jwt.expiration=token_expiration_
+application.security.jwt.refresh-token.expiration=token_expiration_
 ```
 
 > 🔑 Generate a secure Base64 HS256 key for `secret-key`, e.g.:
