@@ -12,7 +12,6 @@ Backend server for **Attendify**, a Bluetooth Low Energy (BLE) based smart atten
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
 [![JWT](https://img.shields.io/badge/JWT-Auth-000000?style=for-the-badge&logo=jsonwebtokens&logoColor=white)](https://jwt.io/)
 [![Maven](https://img.shields.io/badge/Maven-C71A36?style=for-the-badge&logo=apachemaven&logoColor=white)](https://maven.apache.org/)
-[![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](#license)
 
 [Overview](#-overview) •
 [Architecture](#-architecture) •
